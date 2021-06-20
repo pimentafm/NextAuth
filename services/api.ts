@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosInstance } from "axios";
 import { GetServerSidePropsContext } from "next";
 import { parseCookies, setCookie } from "nookies";
 import { signOut } from "../contexts/AuthContext";
+import { AuthTokenError } from "./errors/AuthTokenErrors";
 
 type QueueProps = {
   onSuccess(token: string): void;
@@ -75,6 +76,8 @@ export function setupAPIClient(ctx: GetServerSidePropsContext) {
 
                 if (process.browser) {
                   signOut();
+                } else {
+                  return Promise.reject(new AuthTokenError());
                 }
               })
               .finally(() => {
